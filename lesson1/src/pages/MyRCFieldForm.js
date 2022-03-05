@@ -1,4 +1,3 @@
-import { stringify } from "querystring";
 import React, { Component } from "react";
 import { v4 as uuidv4 } from "uuid";
 import Input from "../components/Input";
@@ -49,7 +48,7 @@ const schema = {
           // },
           renderIf: function (form) {
             const username = form.getFieldValue("username");
-            return !!username;
+            return username === "hacker";
           },
         },
       },
@@ -73,9 +72,9 @@ function populateKeyAutomatically(node) {
   });
 }
 
-console.log("before adding keys: " + JSON.stringify(schema, null, "\t"));
+// console.log("before adding keys: " + JSON.stringify(schema, null, "\t"));
 populateKeyAutomatically(schema);
-console.log("After adding keys: " + JSON.stringify(schema, null, "\t"));
+// console.log("After adding keys: " + JSON.stringify(schema, null, "\t"));
 
 function FieldInput(props) {
   const { name, rules, placeholder, ...restProps } = props;

@@ -7,6 +7,12 @@ class Field extends Component {
 
   derivedPropsMap = new Map();
 
+  constructor(props) {
+    super(props);
+    //To avoid being rendered first time (Mount) and then being hidden immediately caused by the derived props.
+    this.derivedPropsMap.set("renderIf", false);
+  }
+
   componentDidMount() {
     this.unregister = this.context.setFieldEntities(this);
     this.onStoreChange([this.props.name]);
@@ -19,17 +25,15 @@ class Field extends Component {
   }
 
   onStoreChange = (keys) => {
-    const { name, dependences = [], derivedProps } = this.props;
-    if (R.includes(name, keys)) {
-      this.forceUpdate();
-      return;
-    }
-
-    if (R.intersection(keys, dependences).length === 0 || !derivedProps) {
-      return;
-    }
+    const { name, dependences = [], derivedProps = {} } = this.props;
 
     let isRequiredToUpdate = false;
+    if (R.includes(name, keys)) {
+      isRequiredToUpdate = true;
+    } else if (R.intersection(keys, dependences).length === 0) {
+      isRequiredToUpdate = false;
+    }
+
     Object.keys(derivedProps).forEach((key) => {
       const fn = derivedProps[key];
       let newProp = fn(this.context);
@@ -38,6 +42,12 @@ class Field extends Component {
         this.derivedPropsMap.set(key, newProp);
       }
     });
+
+    //add this one by default and expect this to be overwritten
+    if (derivedProps.hasOwnProperty("renderIf") === false) {
+      this.derivedPropsMap.set("renderIf", true);
+    }
+
     if (isRequiredToUpdate) {
       this.forceUpdate();
     }
@@ -73,7 +83,8 @@ class Field extends Component {
     if (updatedProps?.renderIf === false) {
       return null;
     }
-    console.log("render"); //sy-log
+    delete updatedProps["renderIf"];
+    console.log("render : " + this.props.name); //sy-log
     const { children } = this.props;
     const returnChildNode = React.cloneElement(children, updatedProps);
     return returnChildNode;
