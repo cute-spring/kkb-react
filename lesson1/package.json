@@ -13,6 +13,7 @@
     "@types/node": "*",
     "antd": "^4.7.3",
     "craco-less": "^1.17.0",
+    "ramda": "^0.28.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-scripts": "4.0.0",

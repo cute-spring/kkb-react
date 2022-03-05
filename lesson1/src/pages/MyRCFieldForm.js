@@ -1,3 +1,4 @@
+import { stringify } from "querystring";
 import React, { Component } from "react";
 import { v4 as uuidv4 } from "uuid";
 import Input from "../components/Input";
@@ -37,10 +38,19 @@ const schema = {
         placeholder: "password",
         rules: [passworRules],
         dependences: ["username"],
-        derivedFuntion: function (form) {
-          console.debug(form);
-          const username = form.getFieldValue("username");
-          return { visible: username === "hacker" };
+        // derivedFuntion: function (form) {
+        //   const username = form.getFieldValue("username");
+        //   return { visible: username === "hacker" };
+        // },
+        derivedProps: {
+          // visible: function (form) {
+          //   const username = form.getFieldValue("username");
+          //   return username === "hacker";
+          // },
+          renderIf: function (form) {
+            const username = form.getFieldValue("username");
+            return !!username;
+          },
         },
       },
     },
