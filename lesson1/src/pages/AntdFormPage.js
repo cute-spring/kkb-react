@@ -1,10 +1,10 @@
-import React, {useEffect, Component} from "react";
-import {Form, Button, Input} from "antd";
+import { Button, Form, Input } from "antd";
+import React, { useEffect } from "react";
 
 const FormItem = Form.Item;
 
-const nameRules = {required: true, message: "请输入姓名！"};
-const passworRules = {required: true, message: "请输入密码！"};
+const nameRules = { required: true, message: "请输入姓名！" };
+const passworRules = { required: true, message: "请输入密码！" };
 
 // class AntdFormPage extends Component {
 //   formRef = React.createRef();
@@ -53,11 +53,6 @@ export default function AntdFormPage(props) {
   const onFinishFailed = (val) => {
     console.log("onFinishFailed", val); //sy-log
   };
-
-  useEffect(() => {
-    // form.setFieldsValue({username: "defalut"});
-    console.log("form", form); //sy-log
-  }, []);
 
   return (
     <div>

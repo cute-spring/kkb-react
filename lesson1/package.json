@@ -3,17 +3,22 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@babel/core": ">=7.0.0 <8.0.0",
     "@babel/plugin-proposal-decorators": "^7.12.1",
-    "@craco/craco": "^5.7.0",
+    "@craco/craco": "^6.0.0",
+    "@testing-library/dom": "^8.11.3",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
+    "@types/node": "*",
     "antd": "^4.7.3",
     "craco-less": "^1.17.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-scripts": "4.0.0",
-    "web-vitals": "^0.2.4"
+    "typescript": ">=3.2.1 <4.0.0",
+    "web-vitals": "^0.2.4",
+    "webpack": "^4.0.0 || ^5.0.0"
   },
   "scripts": {
     "start": "craco start",

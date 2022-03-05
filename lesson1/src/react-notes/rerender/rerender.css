@@ -1,0 +1,11 @@
+.counter-num {
+  margin: 20px;
+  padding: 5px;
+  border: solid 1px rgb(9, 255, 0);
+}
+
+.counter {
+  margin: 10px;
+  padding: 10px;
+  border: solid 1px rgb(4, 0, 255);
+}
