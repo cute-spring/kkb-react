@@ -1,8 +1,6 @@
 import React, { Component } from "react";
-import { v4 as uuidv4 } from "uuid";
-import Input from "../components/Input";
-import Select from "../components/Select";
-import Form, { Field, FormStore } from "../components/my-rc-field-form";
+import ComponentProxy from "../components/ComponentProxy";
+import { FormStore } from "../components/my-rc-field-form";
 const nameRules = { required: true, message: "请输入姓名！" };
 const passworRules = { required: true, message: "请输入密码！" };
 
@@ -63,57 +61,6 @@ const schema = {
     },
   ],
 };
-
-function populateKeyAutomatically(node) {
-  if (!node.key) {
-    node.key = uuidv4();
-  }
-  (node.children || []).forEach((subNode) => {
-    subNode.key = subNode.key || uuidv4();
-    populateKeyAutomatically(subNode);
-  });
-}
-
-// console.log("before adding keys: " + JSON.stringify(schema, null, "\t"));
-populateKeyAutomatically(schema);
-// console.log("After adding keys: " + JSON.stringify(schema, null, "\t"));
-
-function FieldInput(props) {
-  const { name, rules, ...restProps } = props;
-  return (
-    <Field name={name} rules={rules} {...restProps}>
-      <Input />
-    </Field>
-  );
-}
-
-function FieldSelect(props) {
-  const { name, rules, placeholder, ...restProps } = props;
-  return (
-    <Field name={name} rules={rules} {...restProps}>
-      <Select />
-    </Field>
-  );
-}
-
-function Button() {
-  return <button>Submit</button>;
-}
-
-const componentMapper = {
-  Form: Form,
-  FieldInput: FieldInput,
-  Button: Button,
-  FieldSelect: FieldSelect,
-};
-
-function ComponentProxy(schema) {
-  const { type, props, children } = schema;
-  const childrenInstance = children?.map((childMetadata) => {
-    return React.createElement(ComponentProxy, childMetadata);
-  });
-  return React.createElement(componentMapper[type], props, childrenInstance);
-}
 
 export default class MyRCFieldForm extends Component {
   // formRef = React.createRef();
