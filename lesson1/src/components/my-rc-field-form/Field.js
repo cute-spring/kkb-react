@@ -62,7 +62,14 @@ class Field extends Component {
       derivedProps[name] = value;
     });
 
-    const { name } = this.props;
+    const {
+      name,
+      rule,
+      children,
+      dependences,
+      derivedProps: originalDerivedProps,
+      ...restProps
+    } = this.props;
     const { getFieldValue, setFieldsValue } = this.context;
     return {
       value: getFieldValue(name), //"omg", //get(name) store
@@ -74,6 +81,7 @@ class Field extends Component {
         });
         // console.log("newVal", newVal); //sy-log
       },
+      ...restProps,
       ...derivedProps,
     };
   };

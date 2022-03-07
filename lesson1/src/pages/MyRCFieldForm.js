@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { v4 as uuidv4 } from "uuid";
 import Input from "../components/Input";
+import Select from "../components/Select";
 import Form, { Field, FormStore } from "../components/my-rc-field-form";
 const nameRules = { required: true, message: "请输入姓名！" };
 const passworRules = { required: true, message: "请输入密码！" };
@@ -27,7 +28,6 @@ const schema = {
         name: "username",
         placeholder: "username",
         rules: [nameRules],
-        visible: true,
       },
     },
     {
@@ -37,20 +37,22 @@ const schema = {
         placeholder: "password",
         rules: [passworRules],
         dependences: ["username"],
-        // derivedFuntion: function (form) {
-        //   const username = form.getFieldValue("username");
-        //   return { visible: username === "hacker" };
-        // },
         derivedProps: {
-          // visible: function (form) {
-          //   const username = form.getFieldValue("username");
-          //   return username === "hacker";
-          // },
           renderIf: function (form) {
             const username = form.getFieldValue("username");
             return username === "hacker";
           },
         },
+      },
+    },
+    {
+      type: "FieldSelect",
+      props: {
+        name: "market",
+        options: [
+          { key: "male", text: "Male" },
+          { key: "female", text: "female" },
+        ],
       },
     },
     {
@@ -77,10 +79,19 @@ populateKeyAutomatically(schema);
 // console.log("After adding keys: " + JSON.stringify(schema, null, "\t"));
 
 function FieldInput(props) {
+  const { name, rules, ...restProps } = props;
+  return (
+    <Field name={name} rules={rules} {...restProps}>
+      <Input />
+    </Field>
+  );
+}
+
+function FieldSelect(props) {
   const { name, rules, placeholder, ...restProps } = props;
   return (
     <Field name={name} rules={rules} {...restProps}>
-      <Input placeholder={placeholder} />
+      <Select />
     </Field>
   );
 }
@@ -93,10 +104,10 @@ const componentMapper = {
   Form: Form,
   FieldInput: FieldInput,
   Button: Button,
+  FieldSelect: FieldSelect,
 };
 
 function ComponentProxy(schema) {
-  //   const [derivedProps, setDerivedProps] = useState({});
   const { type, props, children } = schema;
   const childrenInstance = children?.map((childMetadata) => {
     return React.createElement(ComponentProxy, childMetadata);
