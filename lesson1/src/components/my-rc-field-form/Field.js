@@ -20,6 +20,7 @@ class Field extends Component {
 
   componentWillUnmount() {
     if (this.unregister) {
+      this.context.delFieldValue(this);
       this.unregister();
     }
   }
@@ -30,8 +31,8 @@ class Field extends Component {
     let isRequiredToUpdate = false;
     if (R.includes(name, keys)) {
       isRequiredToUpdate = true;
-    } else if (R.intersection(keys, dependences).length === 0) {
-      isRequiredToUpdate = false;
+    } else if (R.intersection(keys, dependences).length > 0) {
+      isRequiredToUpdate = true;
     }
 
     Object.keys(derivedProps).forEach((key) => {

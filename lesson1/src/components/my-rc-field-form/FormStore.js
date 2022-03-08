@@ -9,7 +9,17 @@ export class FormStore {
 
     // 开辟一个空间存储callbacks
     this.callbacks = {};
+
+    this.observers = [];
   }
+
+  register = (observer) => {
+    this.observers.push(observer);
+
+    return () => {
+      this.observers = this.observers.filter((item) => item !== observer);
+    };
+  };
 
   setCallbacks = (newCallbacks) => {
     this.callbacks = {
@@ -25,8 +35,12 @@ export class FormStore {
 
     return () => {
       this.fieldEntities = this.fieldEntities.filter((item) => item !== entity);
-      delete this.store[entity.props.name];
+      // delete this.store[entity.props.name];
     };
+  };
+
+  delFieldValue = (entity) => {
+    delete this.store[entity.props.name];
   };
 
   // get 获取全部状态
@@ -83,6 +97,7 @@ export class FormStore {
 
   getForm = () => {
     return {
+      delFieldValue: this.delFieldValue,
       getFieldValue: this.getFieldValue,
       getFieldsValue: this.getFieldsValue,
       setFieldsValue: this.setFieldsValue,
