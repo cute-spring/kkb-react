@@ -16,12 +16,8 @@ class CustomizeInput extends React.Component {
     this.state = {};
   }
   render() {
-    const {value = "", ...otherProps} = this.props;
-    return (
-      <div style={{padding: 10}}>
-        <Input style={{outline: "none"}} value={value} {...otherProps} />
-      </div>
-    );
+    const { value = "", ...otherProps } = this.props;
+    return <Input style={{ outline: "none" }} value={value} {...otherProps} />;
   }
 }
 

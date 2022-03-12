@@ -8,10 +8,10 @@ const wrapWithLabel = (Comp) => (props) => {
   const { label, ...restProps } = props;
   const id = restProps.id || uuidv4();
   return (
-    <>
+    <div style={{ padding: "10px" }}>
       <label htmlFor={id}>{label} : </label>
       <Comp {...restProps} id={id} />
-    </>
+    </div>
   );
 };
 
@@ -40,9 +40,14 @@ const componentMapper = {
   FieldSelect: FieldSelect,
 };
 export function addInternalKey(parentKey, children = []) {
-  children.forEach((metadata, index) => {
+  let sequence = children.filter((metadata, index) => {
+    return !!metadata.props.__key__;
+  }).length;
+  children.forEach((metadata) => {
     const { props, children } = metadata;
-    props.__key__ = `${parentKey}_${index}`;
+    if (!props.__key__) {
+      props.__key__ = `${parentKey}_${sequence++}`;
+    }
     addInternalKey(props.__key__, children);
   });
 }

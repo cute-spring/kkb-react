@@ -20,14 +20,14 @@ const schema = {
     },
   },
   children: [
-    {
-      type: "FieldInput",
-      props: {
-        name: "bankName",
-        label: "Bank Name",
-        placeholder: "Bank Name",
-      },
-    },
+    // {
+    //   type: "FieldInput",
+    //   props: {
+    //     name: "bankName",
+    //     label: "Bank Name",
+    //     placeholder: "Bank Name",
+    //   },
+    // },
     {
       type: "FieldSelect",
       props: {
@@ -180,6 +180,20 @@ const schema = {
   ],
 };
 
+addInternalKey("k", [schema]);
+console.log(schema);
+
+schema.children = [
+  {
+    type: "FieldInput",
+    props: {
+      name: "bankName",
+      label: "Bank Name",
+      placeholder: "Bank Name",
+    },
+  },
+  ...schema.children,
+];
 addInternalKey("k", [schema]);
 console.log(schema);
 export default class MyRCFieldForm extends Component {
