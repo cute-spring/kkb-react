@@ -70,11 +70,6 @@ export class FormStore {
     // todo
     const keys = Object.keys(newStore);
     this.notify(keys);
-    // this.fieldEntities.forEach((entity) => {
-    //   //   if (keys.indexOf(entity.props.name) > -1) {
-    //   entity.onStoreChange(keys);
-    //   //   }
-    // });
   };
 
   notify = (keys) => {

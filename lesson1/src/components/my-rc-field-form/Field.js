@@ -35,6 +35,10 @@ class Field extends Component {
       isRequiredToUpdate = true;
     }
 
+    if (isRequiredToUpdate === false) {
+      return;
+    }
+
     Object.keys(derivedProps).forEach((key) => {
       const fn = derivedProps[key];
       let newProp = fn(this.context);

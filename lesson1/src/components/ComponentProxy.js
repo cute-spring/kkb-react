@@ -9,7 +9,7 @@ const wrapWithLabel = (Comp) => (props) => {
   const id = restProps.id || uuidv4();
   return (
     <>
-      <label htmlFor={id}>{label}</label> :
+      <label htmlFor={id}>{label} : </label>
       <Comp {...restProps} id={id} />
     </>
   );
@@ -39,7 +39,13 @@ const componentMapper = {
   Button: Button,
   FieldSelect: FieldSelect,
 };
-
+export function addInternalKey(parentKey, children = []) {
+  children.forEach((metadata, index) => {
+    const { props, children } = metadata;
+    props.__key__ = `${parentKey}_${index}`;
+    addInternalKey(props.__key__, children);
+  });
+}
 function ComponentProxy(schema) {
   const { type, props, children } = schema;
   const childrenInstance = children?.map((childMetadata) => {
