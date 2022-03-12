@@ -4,23 +4,30 @@ import Input from "../components/Input";
 import Form, { Field } from "../components/my-rc-field-form";
 import Select from "../components/Select";
 
-function FieldInput(props) {
-  const { name, rules, ...restProps } = props;
+const wrapWithLabel = (Comp) => (props) => {
+  const { label, ...restProps } = props;
+  const id = restProps.id || uuidv4();
   return (
-    <Field name={name} rules={rules} {...restProps}>
-      <Input />
-    </Field>
+    <>
+      <label htmlFor={id}>{label}</label> :
+      <Comp {...restProps} id={id} />
+    </>
   );
-}
+};
 
-function FieldSelect(props) {
-  const { name, rules, placeholder, ...restProps } = props;
+const wrapWithField = (Comp) => (props) => {
   return (
-    <Field name={name} rules={rules} {...restProps}>
-      <Select />
+    <Field {...props}>
+      <Comp />
     </Field>
   );
-}
+};
+
+const LabelInput = (props) => wrapWithLabel(Input)(props);
+const FieldInput = (props) => wrapWithField(LabelInput)(props);
+
+const LabelSelect = (props) => wrapWithLabel(Select)(props);
+const FieldSelect = (props) => wrapWithField(LabelSelect)(props);
 
 function Button() {
   return <button>Submit</button>;
@@ -42,4 +49,4 @@ function ComponentProxy(schema) {
   return React.createElement(componentMapper[type], props, childrenInstance);
 }
 
-export default ComponentProxy; //{ populateKeyAutomatically, ComponentProxy };
+export default ComponentProxy;

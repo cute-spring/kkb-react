@@ -21,17 +21,21 @@ const schema = {
   },
   children: [
     {
-      type: "FieldInput",
+      type: "FieldSelect",
       props: {
-        name: "username",
-        placeholder: "username",
-        rules: [nameRules],
+        name: "tool",
+        label: "f/e tool",
+        options: [
+          { key: "react", text: "react" },
+          { key: "vue", text: "vue" },
+        ],
       },
     },
     {
       type: "FieldInput",
       props: {
         name: "password",
+        label: "password",
         placeholder: "password",
         rules: [passworRules],
         dependences: ["username"],
@@ -44,13 +48,18 @@ const schema = {
       },
     },
     {
-      type: "FieldSelect",
+      type: "FieldInput",
       props: {
-        name: "market",
-        options: [
-          { key: "male", text: "Male" },
-          { key: "female", text: "female" },
-        ],
+        name: "username",
+        label: "username",
+        placeholder: "username",
+        rules: [nameRules],
+        derivedProps: {
+          renderIf: function (form) {
+            const tool = form.getFieldValue("tool");
+            return tool === "vue";
+          },
+        },
       },
     },
     {

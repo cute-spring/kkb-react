@@ -44,9 +44,19 @@ class Field extends Component {
       }
     });
 
+    const doesRenderIfDefined = derivedProps.hasOwnProperty("renderIf");
     //add this one by default and expect this to be overwritten
-    if (derivedProps.hasOwnProperty("renderIf") === false) {
+    if (doesRenderIfDefined === false) {
       this.derivedPropsMap.set("renderIf", true);
+    }
+
+    /**
+     * clean up input value
+     */
+    const fieldValue = this.context.getFieldValue(name);
+    const isRequiredToRender = this.derivedPropsMap.get("renderIf");
+    if (fieldValue !== undefined && isRequiredToRender === false) {
+      this.context.delFieldValue(this);
     }
 
     if (isRequiredToUpdate) {

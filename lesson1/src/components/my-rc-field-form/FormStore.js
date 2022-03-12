@@ -40,7 +40,9 @@ export class FormStore {
   };
 
   delFieldValue = (entity) => {
-    delete this.store[entity.props.name];
+    const propName = entity.props.name;
+    delete this.store[propName];
+    this.notify([propName]);
   };
 
   // get 获取全部状态
@@ -67,10 +69,17 @@ export class FormStore {
     // 2. 更新组件
     // todo
     const keys = Object.keys(newStore);
+    this.notify(keys);
+    // this.fieldEntities.forEach((entity) => {
+    //   //   if (keys.indexOf(entity.props.name) > -1) {
+    //   entity.onStoreChange(keys);
+    //   //   }
+    // });
+  };
+
+  notify = (keys) => {
     this.fieldEntities.forEach((entity) => {
-      //   if (keys.indexOf(entity.props.name) > -1) {
       entity.onStoreChange(keys);
-      //   }
     });
   };
 
