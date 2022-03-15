@@ -55,62 +55,6 @@ const schema = {
           { key: "05", text: "Mx" },
           { key: "06", text: "Others" },
         ],
-        derivedProps2: {
-          args: [
-            //type : Input|constant|asynfn
-            {
-              name: "country",
-              type: "Input",
-              path: "country",
-              accessLevel: "private",
-            },
-            {
-              name: "ageOfMajority",
-              type: "constant",
-              value: 18,
-            },
-            {
-              name: "ageOfMajority",
-              type: "constant",
-              //
-              //   * accessLevel : package|private <br>
-              //   * private: the default value which is only visible by the element itself.<br>
-              //   * package: visible by the element itself and the sub element under this element.
-              //
-              accessLevel: "package",
-              //
-              //   No limitation to the value
-              //
-              value: 18,
-            },
-          ],
-          // [key:string]:
-          computed: {
-            visible: "expr", //predicate expression
-            readonly: "expr", //predicate expression
-            mandatory: "expr", //predicate expression
-            validation: [
-              { rule: "expr", msg: "" },
-              { rule: "expr", msg: "" },
-            ],
-            overwrite: {
-              predicate: "expr",
-              value: "expr",
-            },
-            default: {
-              predicate: "expr",
-              value: "expr",
-            },
-            customizedProps_xxx: {
-              predicate: "expr",
-              value: "expr",
-            },
-            customizedProps_yyy: {
-              predicate: "expr",
-              value: "expr", // boolean,number,array,json, expressionString,functionRef???
-            },
-          },
-        },
       },
     },
     {
@@ -134,6 +78,7 @@ const schema = {
         name: "tool",
         label: "f/e tool",
         options: [
+          { key: "--", text: "Please select" },
           { key: "react", text: "react" },
           { key: "vue", text: "vue" },
         ],
@@ -146,13 +91,32 @@ const schema = {
         label: "password",
         placeholder: "password",
         rules: [passworRules],
-        dependences: ["username"],
-        derivedProps: {
-          renderIf: function (form) {
-            const username = form.getFieldValue("username");
-            return username === "hacker";
-          },
-        },
+
+        // derivedProps2: {
+        //   args: [
+        //     {
+        //       name: "username",
+        //       type: "Input",
+        //       path: "username",
+        //       accessLevel: "private",
+        //     },
+        //     {
+        //       name: "expectedUserName",
+        //       type: "constant",
+        //       value: "hacker",
+        //     },
+        //   ],
+        //   computed: {
+        //     visible: "username === expectedUserName", //predicate expression
+        //   },
+        // },
+        // dependences: ["username"],
+        // derivedProps: {
+        //   renderIf: function (form) {
+        //     const username = form.getFieldValue("username");
+        //     return username === "hacker";
+        //   },
+        // },
       },
     },
     {
@@ -162,6 +126,24 @@ const schema = {
         label: "username",
         placeholder: "username",
         rules: [nameRules],
+        derivedProps2: {
+          args: [
+            {
+              name: "tool",
+              type: "Input",
+              path: "tool",
+              accessLevel: "private",
+            },
+            {
+              name: "expectedTool",
+              type: "constant",
+              value: "vue",
+            },
+          ],
+          computed: {
+            visible: "tool == expectedTool", //predicate expression
+          },
+        },
         dependences: ["tool"],
         derivedProps: {
           renderIf: function (form) {
@@ -211,6 +193,63 @@ export default class MyRCFieldForm extends Component {
     );
   }
 }
+
+// derivedProps2: {
+// args: [
+//   type : Input|constant|asynfn
+// {
+// name: "country",
+// type: "Input",
+// path: "country",
+// accessLevel: "private",
+// },
+// {
+// name: "ageOfMajority",
+// type: "constant",
+// value: 18,
+// },
+// {
+// name: "ageOfMajority",
+// type: "constant",
+
+// * accessLevel : package|private <br>
+// * private: the default value which is only visible by the element itself.<br>
+// * package: visible by the element itself and the sub element under this element.
+
+// accessLevel: "package",
+
+// No limitation to the value
+
+// value: 18,
+// },
+// ],
+// [key:string]:
+// computed: {
+// visible: "expr", //predicate expression
+// readonly: "expr", //predicate expression
+// mandatory: "expr", //predicate expression
+// validation: [
+// { rule: "expr", msg: "" },
+// { rule: "expr", msg: "" },
+// ],
+// overwrite: {
+// predicate: "expr",
+// value: "expr",
+// },
+// default: {
+// predicate: "expr",
+// value: "expr",
+// },
+// customizedProps_xxx: {
+// predicate: "expr",
+// value: "expr",
+// },
+// customizedProps_yyy: {
+// predicate: "expr",
+// value: "expr", // boolean,number,array,json, expressionString,functionRef???
+// },
+// },
+// },
 /**       
          derivedProps2: {
            args: [
