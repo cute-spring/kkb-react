@@ -1,4 +1,7 @@
+import produce from "immer";
 const jexl = require("jexl");
+
+const derivedPropsByKey = {};
 
 const generateArgsContext = (args = [], getFieldValue) => {
   const argsCtx = {};
@@ -24,6 +27,28 @@ function DerivedPropsResolver(props, { getFieldValue }) {
       if (derivedPropsDef === undefined) {
         return EMPTY;
       }
+      derivedPropsByKey[__key__] = derivedPropsByKey[__key__] || {};
+      const currentState = derivedPropsByKey[__key__];
+
+      console.group("derivedProps2 - [%s] - [%s]", name, __key__);
+      const newState = produce(currentState, (draft) => {
+        const { args, computed = {} } = derivedPropsDef;
+        if (args) {
+          const argsCtx = generateArgsContext(args, getFieldValue);
+          Object.keys(computed).forEach((key) => {
+            const expressionRule = computed[key];
+            const res = jexl.evalSync(expressionRule, argsCtx);
+            console.log("argsCtx : %o", argsCtx);
+            console.log("expression rule : '%s'", expressionRule);
+            console.log("%s : %s", key, res);
+            draft[key] = res;
+          });
+        }
+      });
+      console.log("isRequiredToUpdate : %s", currentState !== newState);
+      derivedPropsByKey[__key__] = newState;
+      console.groupEnd("derivedProps2 - [%s] - [%s]", name, __key__);
+
       const result = {};
       const { args, computed = {} } = derivedPropsDef;
       if (args) {

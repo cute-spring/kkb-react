@@ -35,8 +35,6 @@ class Field extends Component {
       dependences = [],
       derivedProps: derivedPropsDef = {},
     } = this.props;
-    const derivedPropsResolver = DerivedPropsResolver(this.props, this.context);
-    console.log(derivedPropsResolver.getDerivedProps());
 
     let isRequiredToUpdate = false;
     if (R.includes(name, keys)) {
@@ -48,6 +46,10 @@ class Field extends Component {
     if (isRequiredToUpdate === false) {
       return;
     }
+    
+    const derivedPropsResolver = DerivedPropsResolver(this.props, this.context);
+    // console.log();
+    derivedPropsResolver.getDerivedProps();
 
     Object.keys(derivedPropsDef).forEach((key) => {
       const fn = derivedPropsDef[key];
