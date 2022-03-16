@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import FieldContext from "./FieldContext";
 import * as R from "ramda";
-const jexl = require("jexl");
+import DerivedPropsResolver from "./DerivedPropsResolver";
+// const jexl = require("jexl");
 
 class Field extends Component {
   static contextType = FieldContext;
@@ -32,39 +33,10 @@ class Field extends Component {
     const {
       name,
       dependences = [],
-      derivedProps = {},
-      derivedProps2 = {},
+      derivedProps: derivedPropsDef = {},
     } = this.props;
-
-    const generateArgsContext = (args = []) => {
-      const argsCtx = {};
-      args.forEach((item) => {
-        const { type, name, path, value } = item;
-        if (type === "Input") {
-          const fieldValue = this.context.getFieldValue(path);
-          argsCtx[name] = fieldValue;
-        } else if (type === "constant") {
-          argsCtx[name] = value;
-        }
-      });
-      return argsCtx;
-    };
-    const { args, computed = {} } = derivedProps2;
-    if (args) {
-      const argsCtx = generateArgsContext(derivedProps2.args);
-      console.group("derivedProps2 - " + name);
-      Object.keys(computed).forEach((key) => {
-        const expressionRule = computed[key];
-        const res = jexl.evalSync(expressionRule, argsCtx);
-        console.log("argsCtx : %o", argsCtx);
-        console.log("expression rule : '%s'", expressionRule);
-        console.log("result : %s", res);
-      });
-      console.groupEnd("derivedProps2 - " + name);
-      // computed: {
-      //           visible: "tool == expectedTool", //predicate expression
-      //         },
-    }
+    const derivedPropsResolver = DerivedPropsResolver(this.props, this.context);
+    console.log(derivedPropsResolver.getDerivedProps());
 
     let isRequiredToUpdate = false;
     if (R.includes(name, keys)) {
@@ -77,8 +49,8 @@ class Field extends Component {
       return;
     }
 
-    Object.keys(derivedProps).forEach((key) => {
-      const fn = derivedProps[key];
+    Object.keys(derivedPropsDef).forEach((key) => {
+      const fn = derivedPropsDef[key];
       let newProp = fn(this.context);
       if (newProp !== this.getDerivedProp(key)) {
         isRequiredToUpdate = true;
@@ -86,7 +58,7 @@ class Field extends Component {
       }
     });
 
-    const doesRenderIfDefined = derivedProps.hasOwnProperty("renderIf");
+    const doesRenderIfDefined = derivedPropsDef.hasOwnProperty("renderIf");
     //add this one by default and expect this to be overwritten
     if (doesRenderIfDefined === false) {
       this.setDerivedProp("renderIf", true);
