@@ -9,13 +9,15 @@ class Field extends Component {
 
   derivedPropsMap = new Map();
   derivedProps2Map = new Map();
+  derivedPropsResolver = null;
   // constructor(props) {
   //   super(props);
-  //To avoid being rendered first time (Mount) and then being hidden immediately caused by the derived props.
-  // this.setDerivedProp("renderIf", false);
+  //   // To avoid being rendered first time (Mount) and then being hidden immediately caused by the derived props.
+  //   // this.setDerivedProp("renderIf", false);
   // }
 
   componentDidMount() {
+    this.derivedPropsResolver = new DerivedPropsResolver(this.context);
     this.unregister = this.context.setFieldEntities(this);
     this.onStoreChange([this.props.name]);
   }
@@ -34,18 +36,17 @@ class Field extends Component {
     if (R.includes(name, keys)) {
       isRequiredToUpdate = true;
     }
-    const derivedPropsResolver = DerivedPropsResolver(this.props, this.context);
-    const [newState = {}, prevState = {}, hasDiff = false] =
-      derivedPropsResolver.getDerivedProps();
-    console.log({ newState });
-    console.log({ prevState });
-    console.log({ hasDiff });
+
+    const { nextState, hasDiff } = this.derivedPropsResolver.getDerivedProps(
+      this.props
+    );
+
     isRequiredToUpdate = isRequiredToUpdate || hasDiff;
 
     if (isRequiredToUpdate === false) {
       return;
     }
-    this.setDerivedProps(newState);
+    this.setDerivedProps(nextState);
 
     /**
      * clean up input value
@@ -113,12 +114,11 @@ class Field extends Component {
   };
 
   render() {
-    const updatedProps = this.getControlled();
-    if (updatedProps?.renderIf === false) {
+    const { renderIf, ...updatedProps } = this.getControlled();
+    if (renderIf === false) {
       //doesn't render only when renderIf is false exactly, otherwise, if it's true or undefined, go ahead to render.
       return null;
     }
-    delete updatedProps["renderIf"];
     console.log("render : " + this.props.name); //sy-log
     const { children } = this.props;
     const returnChildNode = React.cloneElement(children, updatedProps);
