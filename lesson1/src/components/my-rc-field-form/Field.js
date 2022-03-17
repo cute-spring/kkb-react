@@ -52,7 +52,7 @@ class Field extends Component {
      * clean up input value
      */
     const fieldValue = this.context.getFieldValue(name);
-    const isRequiredToRender = this.getDerivedProp("renderIf");
+    const isRequiredToRender = nextState["renderIf"];
     if (fieldValue !== undefined && isRequiredToRender === false) {
       this.context.delFieldValue(this);
     }
