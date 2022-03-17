@@ -17,7 +17,7 @@ const generateArgsContext = (args = [], getFieldValue) => {
   return argsCtx;
 };
 
-const EMPTY = {};
+const EMPTY = [];
 
 function DerivedPropsResolver(props, { getFieldValue }) {
   // eslint-disable-next-line no-unused-vars
@@ -28,10 +28,10 @@ function DerivedPropsResolver(props, { getFieldValue }) {
         return EMPTY;
       }
       derivedPropsByKey[__key__] = derivedPropsByKey[__key__] || {};
-      const currentState = derivedPropsByKey[__key__];
+      const prevState = derivedPropsByKey[__key__];
 
       console.group("derivedProps2 - [%s] - [%s]", name, __key__);
-      const newState = produce(currentState, (draft) => {
+      const nextState = produce(prevState, (draft) => {
         const { args, computed = {} } = derivedPropsDef;
         if (args) {
           const argsCtx = generateArgsContext(args, getFieldValue);
@@ -45,26 +45,11 @@ function DerivedPropsResolver(props, { getFieldValue }) {
           });
         }
       });
-      console.log("isRequiredToUpdate : %s", currentState !== newState);
-      derivedPropsByKey[__key__] = newState;
+      const hasDiff = prevState !== nextState;
+      console.info({ isRequiredToUpdate: hasDiff });
+      derivedPropsByKey[__key__] = nextState;
       console.groupEnd("derivedProps2 - [%s] - [%s]", name, __key__);
-
-      const result = {};
-      const { args, computed = {} } = derivedPropsDef;
-      if (args) {
-        const argsCtx = generateArgsContext(args, getFieldValue);
-        console.group("derivedProps2 - [%s] - [%s]", name, __key__);
-        Object.keys(computed).forEach((key) => {
-          const expressionRule = computed[key];
-          const res = jexl.evalSync(expressionRule, argsCtx);
-          console.log("argsCtx : %o", argsCtx);
-          console.log("expression rule : '%s'", expressionRule);
-          console.log("%s : %s", key, res);
-          result[key] = res;
-        });
-        console.groupEnd("derivedProps2 - [%s] - [%s]", name, __key__);
-      }
-      return result;
+      return [nextState, prevState, hasDiff];
     },
   };
 }

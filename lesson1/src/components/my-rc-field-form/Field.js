@@ -27,38 +27,25 @@ class Field extends Component {
     }
   }
 
-  dependences;
-
   onStoreChange = (keys) => {
-    const {
-      name,
-      dependences = [],
-      derivedProps: derivedPropsDef = {},
-    } = this.props;
+    const { name } = this.props;
 
     let isRequiredToUpdate = false;
     if (R.includes(name, keys)) {
       isRequiredToUpdate = true;
-    } else if (R.intersection(keys, dependences).length > 0) {
-      isRequiredToUpdate = true;
     }
+    const derivedPropsResolver = DerivedPropsResolver(this.props, this.context);
+    const [newState = {}, prevState = {}, hasDiff = false] =
+      derivedPropsResolver.getDerivedProps();
+    console.log({ newState });
+    console.log({ prevState });
+    console.log({ hasDiff });
+    isRequiredToUpdate = isRequiredToUpdate || hasDiff;
 
     if (isRequiredToUpdate === false) {
       return;
     }
-    
-    const derivedPropsResolver = DerivedPropsResolver(this.props, this.context);
-    // console.log();
-    derivedPropsResolver.getDerivedProps();
-
-    Object.keys(derivedPropsDef).forEach((key) => {
-      const fn = derivedPropsDef[key];
-      let newProp = fn(this.context);
-      if (newProp !== this.getDerivedProp(key)) {
-        isRequiredToUpdate = true;
-        this.setDerivedProp(key, newProp);
-      }
-    });
+    this.setDerivedProps(newState);
 
     /**
      * clean up input value
@@ -79,6 +66,12 @@ class Field extends Component {
   };
   setDerivedProp = (propName, value) => {
     this.derivedPropsMap.set(propName, value);
+  };
+  setDerivedProps = (newProps) => {
+    this.derivedPropsMap.clear();
+    Object.keys(newProps).forEach((key) => {
+      this.derivedPropsMap.set(key, newProps[key]);
+    });
   };
   getDerivedProps = () => {
     const derivedProps = {};

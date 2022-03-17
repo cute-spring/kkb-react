@@ -141,7 +141,7 @@ const schema = {
             },
           ],
           computed: {
-            visible: "tool == expectedTool", //predicate expression
+            renderIf: "tool == expectedTool", //predicate expression
           },
         },
         dependences: ["tool"],
