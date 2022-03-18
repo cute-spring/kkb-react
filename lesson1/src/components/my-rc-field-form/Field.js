@@ -7,13 +7,11 @@ import DerivedPropsResolver from "./DerivedPropsResolver";
 class Field extends Component {
   static contextType = FieldContext;
 
-  derivedPropsMap = new Map();
-  derivedProps2Map = new Map();
+  derivedProps = null;
   derivedPropsResolver = null;
   // constructor(props) {
   //   super(props);
-  //   // To avoid being rendered first time (Mount) and then being hidden immediately caused by the derived props.
-  //   // this.setDerivedProp("renderIf", false);
+  // To avoid being rendered first time (Mount) and then being hidden immediately caused by the derived props.
   // }
 
   componentDidMount() {
@@ -31,13 +29,14 @@ class Field extends Component {
 
   onStoreChange = (keys) => {
     const { name } = this.props;
+    const { getFieldValue, delFieldValue } = this.context;
 
     let isRequiredToUpdate = false;
     if (R.includes(name, keys)) {
       isRequiredToUpdate = true;
     }
 
-    const { nextState, hasDiff } = this.derivedPropsResolver.getDerivedProps(
+    const { nextState, hasDiff } = this.derivedPropsResolver.synDerivedProps(
       this.props
     );
 
@@ -51,10 +50,10 @@ class Field extends Component {
     /**
      * clean up input value
      */
-    const fieldValue = this.context.getFieldValue(name);
+    const fieldValue = getFieldValue(name);
     const isRequiredToRender = nextState["renderIf"];
     if (fieldValue !== undefined && isRequiredToRender === false) {
-      this.context.delFieldValue(this);
+      delFieldValue(this);
     }
 
     if (isRequiredToUpdate) {
@@ -63,63 +62,45 @@ class Field extends Component {
   };
 
   getDerivedProp = (propName) => {
-    return this.derivedPropsMap.get(propName);
-  };
-  setDerivedProp = (propName, value) => {
-    this.derivedPropsMap.set(propName, value);
+    return this.derivedProps[propName];
   };
   setDerivedProps = (newProps) => {
-    this.derivedPropsMap.clear();
-    Object.keys(newProps).forEach((key) => {
-      this.derivedPropsMap.set(key, newProps[key]);
-    });
+    this.derivedProps = newProps;
   };
   getDerivedProps = () => {
-    const derivedProps = {};
-    this.derivedPropsMap.forEach((value, name) => {
-      derivedProps[name] = value;
-    });
-    return derivedProps;
+    return this.derivedProps;
   };
 
   getControlled = () => {
-    if (this.getDerivedProp("renderIf") === false) {
-      return { renderIf: false };
-    }
-    const derivedProps = this.getDerivedProps();
-
-    const {
-      name,
-      rule,
-      children,
-      dependences,
-      derivedProps: originalDerivedProps,
-      derivedProps2,
-      ...restProps
-    } = this.props;
+    const { name, rule, children, derivedPropsDef, ...restProps } = this.props;
     const { getFieldValue, setFieldsValue } = this.context;
     return {
-      value: getFieldValue(name), //"omg", //get(name) store
+      value: getFieldValue(name),
       onChange: (e) => {
         const newVal = e.target.value;
         // store set（name）
         setFieldsValue({
           [name]: newVal,
         });
-        // console.log("newVal", newVal); //sy-log
       },
       ...restProps,
-      ...derivedProps,
     };
   };
 
   render() {
-    const { renderIf, ...updatedProps } = this.getControlled();
+    const derivedProps = this.getDerivedProps();
+    if (derivedProps == null) {
+      console.log("render null for '%s'", this.props.name);
+      return null;
+    }
+    const { renderIf, ...restDerivedProps } = derivedProps;
     if (renderIf === false) {
+      console.log("render null for '%s'", this.props.name);
       //doesn't render only when renderIf is false exactly, otherwise, if it's true or undefined, go ahead to render.
       return null;
     }
-    console.log("render : " + this.props.name); //sy-log
+    console.log("[re-]render '%s'", this.props.name);
+    const updatedProps = { ...this.getControlled(), ...restDerivedProps };
     const { children } = this.props;
     const returnChildNode = React.cloneElement(children, updatedProps);
     return returnChildNode;

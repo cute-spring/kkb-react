@@ -111,7 +111,7 @@ const schema = {
         //   },
         // },
         // dependences: ["username"],
-        // derivedProps: {
+        // derivedPropsDef: {
         //   renderIf: function (form) {
         //     const username = form.getFieldValue("username");
         //     return username === "hacker";
@@ -126,7 +126,7 @@ const schema = {
         label: "username",
         placeholder: "username",
         rules: [nameRules],
-        derivedProps2: {
+        derivedPropsDef: {
           args: [
             {
               name: "tool",
@@ -144,13 +144,13 @@ const schema = {
             renderIf: "tool == expectedTool", //predicate expression
           },
         },
-        dependences: ["tool"],
-        derivedProps: {
-          renderIf: function (form) {
-            const tool = form.getFieldValue("tool");
-            return tool === "vue";
-          },
-        },
+        // dependences: ["tool"],
+        // derivedPropsDef: {
+        //   renderIf: function (form) {
+        //     const tool = form.getFieldValue("tool");
+        //     return tool === "vue";
+        //   },
+        // },
       },
     },
     {

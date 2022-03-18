@@ -34,22 +34,24 @@ function getNextState(prevState, derivedPropsDef, getFieldValue) {
 }
 function DerivedPropsResolver({ getFieldValue }) {
   return {
-    getDerivedProps: (props) => {
-      const { derivedProps2: derivedPropsDef, name, __key__ } = props;
+    synDerivedProps: (props) => {
+      const { derivedPropsDef, name, __key__ } = props;
       derivedPropsByKey[__key__] = derivedPropsByKey[__key__] || {};
       const prevState = derivedPropsByKey[__key__];
       let nextState = prevState;
       let hasDiff = false;
       if (derivedPropsDef !== undefined) {
-        console.group("derivedProps2 - [%s] - [%s]", name, __key__);
+        console.group("derivedPropsDef - [%s] - [%s]", name, __key__);
         nextState = getNextState(prevState, derivedPropsDef, getFieldValue);
         hasDiff = prevState !== nextState;
         derivedPropsByKey[__key__] = nextState;
         console.log({ nextState, prevState, hasDiff });
-        console.groupEnd("derivedProps2 - [%s] - [%s]", name, __key__);
+        console.groupEnd("derivedPropsDef - [%s] - [%s]", name, __key__);
       }
-
       return { nextState, prevState, hasDiff };
+    },
+    getDerivedProps: (__key__) => {
+      return derivedPropsByKey[__key__];
     },
   };
 }
